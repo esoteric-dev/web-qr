@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wi-Fi Connect</title>
+    <link rel="stylesheet" href="./index.css" />
+    <script src="./node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <!-- <script src="./index.js"></script> -->
+  </head>
+  <body>
+    <div id="container">
+      <h1>Wi-Fi Connect</h1>
+      <button id="join-btn" onclick="scan">Join Wi-Fi</button>
+    </div>
+    <main>
+      <div id="reader"></div>
+      <div id="result"></div>
+    </main>
+
+    <script>
+      const joinBtn = document.getElementById("join-btn");
+      // function scan() {
+
+      joinBtn.addEventListener("click", async () => {
+        console.log("button clicked");
+        const scanner = new Html5QrcodeScanner("container", {
+          qrbox: {
+            width: 600,
+            height: 600,
+          },
+          fps: 5,
+        });
+
+        scanner.render(success, error);
+
+        function success(result) {
+          //   console.log(result);
+          // document.etElementById("result").innerHTML = `
+          //   <h2>Success </h2>
+          //   <p>${result} </p>
+          //   `;
+          if (result) {
+            // Extract the Wi-Fi credentials from the QR code data
+            const wifiCredentials = result.data.split(",")[1];
+
+            // Prompt the user to join the Wi-Fi network
+            navigator.network
+              .connect(wifiCredentials)
+              .then(() => {
+                console.log("Connected to Wi-Fi network");
+              })
+              .catch((error) => {
+                console.error("Error connecting to Wi-Fi network:", error);
+              });
+          } else {
+            console.log("Failed to read QR code");
+          }
+
+          scanner.clear();
+          document.getElementById("reader").remove();
+        }
+
+        function error(err) {
+          console.log(err);
+        }
+      });
+      // }
+    </script>
+  </body>
+</html>
